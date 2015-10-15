@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+<title>Choropleth</title>
+<script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+<script src='https://api.mapbox.com/mapbox.js/v2.2.2/mapbox.js'></script>
+<link href='https://api.mapbox.com/mapbox.js/v2.2.2/mapbox.css' rel='stylesheet' />
+<style>
+  body { margin:0; padding:0; }
+  #map { position:absolute; top:0; bottom:0; height: 80%; width:80%;  }
+</style>
+</head>
+<body>
+
+  <div class="container">
+    <div id='map'></div>
+  </div>
+
+  <div class="wrapper">
+       <div id="slider12"></div>
+      <!-- <span id="position">Pro_CN_T1</span></h2> -->
+  </div>
+
+<style>
+.map-legend .swatch {
+  width:20px;
+  height:20px;
+  float:left;
+  margin-right:10px;
+  }
+.leaflet-popup-close-button {
+  display: none;
+  }
+.leaflet-popup-content-wrapper {
+  pointer-events: none;
+  }
+  /*############################### [SLIDER] ################################*/
+.wrapper {
+      width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .wrapper > div {
+      margin: 35px 0;
+    }
+
+    .wrapper > div {
+          margin: 35px 0;
+        }
+
+        #slider8 {
+          height: 250px;
+        }
+
+        #slider9 {
+          height: 250px;
+        }
+</style>
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src='data/cn.js'></script>
+<script src='js/d3.slider.js'></script>
+<link href='css/d3.slider.css' rel='stylesheet' />
+
+<script>
+
+var slider_time = ["Pro_CN_T1", "Prop_CN_T2", "Prop_CN_T3", "Prop_CN_T4", "Prop_CN_T5"];
+
+var valueData;
+
+var statesLayer;
+
+var essai = d3.slider()
+      .scale(d3.scale.ordinal().domain(slider_time).rangePoints([0, 1], 0.5)).axis(d3.svg.axis()).snap(true).value(slider_time[0])
+      d3.select('#slider12').call(essai);
+
+L.mapbox.accessToken = 'pk.eyJ1IjoiaG9zYXJzaXBoIiwiYSI6ImNpZnFzajQ1ODc2MHRzaWtxemV6ZWtkdHEifQ.8uQq7HtgqwHVAsk-lZO3ug';
+  var map = L.mapbox.map('map', 'mapbox.streets')
+    .setView([17, -97], 7);
+
+  var popup = new L.Popup({ autoPan: false });
+
+  // statesData comes from the 'us-states.js' script included above
+  /*
+  statesLayer = L.geoJson(cnData,  {
+      style: getStyle,
+      onEachFeature: onEachFeature
+  }).addTo(map);
+*/
+  essai.on("slide",
+                function(evt, value) {
+
+                  statesLayer = L.geoJson(cnData,  {
+                      style: getStyle,
+                      onEachFeature: onEachFeature
+                  }).addTo(map);
+
+                   d3.select('#position').text(value);
+                   valueData = value;
+                   function getStyle(feature) {
+                       return  {
+                           weight: 2,
+                           opacity: 0.1,
+                           color: 'black',
+                           fillOpacity: 0.9,
+                           fillColor: getColor(feature.properties[valueData] * 100)
+                       };
+                     }
+               });
+
+
+
+
+/*
+  essai.on("slide",
+                function(evt, value) {
+                   d3.select('#position').text(value);
+                   valueData = value;
+               })
+
+
+  function getStyle(feature) {
+      return  {
+          weight: 2,
+          opacity: 0.1,
+          color: 'black',
+          fillOpacity: 0.9,
+          fillColor: getColor(feature.properties.Pro_CN_T1 * 100)
+      };
+    }
+*/
+
+  // get color depending on population density value
+  function getColor(d) {
+      return d > 1000 ? '#8c2d04' :
+          d > 500  ? '#cc4c02' :
+          d > 200  ? '#ec7014' :
+          d > 100  ? '#fe9929' :
+          d > 50   ? '#fec44f' :
+          d > 20   ? '#fee391' :
+          d > 10   ? '#fff7bc' :
+          'red';
+  }
+
+  function onEachFeature(feature, layer) {
+      layer.on({
+          mousemove: mousemove,
+          mouseout: mouseout,
+          click: zoomToFeature
+      });
+  }
+
+  var closeTooltip;
+
+  function mousemove(e) {
+      var layer = e.target;
+
+      popup.setLatLng(e.latlng);
+      popup.setContent('<div class="marker-title">' + layer.feature.properties.NOM_MUN + '</div>' +
+          layer.feature.properties.Pro_CN_T1 * 100 + ' Cantidad de Verdes');
+
+      if (!popup._map) popup.openOn(map);
+      window.clearTimeout(closeTooltip);
+
+      // highlight feature
+      layer.setStyle({
+          weight: 3,
+          opacity: 0.3,
+          fillOpacity: 0.9
+      });
+
+      if (!L.Browser.ie && !L.Browser.opera) {
+          layer.bringToFront();
+      }
+  }
+
+  function mouseout(e) {
+      statesLayer.resetStyle(e.target);
+      closeTooltip = window.setTimeout(function() {
+          map.closePopup();
+      }, 100);
+  }
+
+  function zoomToFeature(e) {
+      map.fitBounds(e.target.getBounds());
+  }
+
+  map.legendControl.addLegend(getLegendHTML());
+
+  function getLegendHTML() {
+    var grades = [0, 10, 20, 50, 100, 200, 500, 1000],
+    labels = [],
+    from, to;
+
+    for (var i = 0; i < grades.length; i++) {
+      from = grades[i];
+      to = grades[i + 1];
+
+      labels.push(
+        '<li><span class="swatch" style="background:' + getColor(from + 1) + '"></span> ' +
+        from + (to ? '&ndash;' + to : '+')) + '</li>';
+    }
+
+    return '<span>Cantidad de verdes</span><ul>' + labels.join('') + '</ul>' + '<span id="position">Pro_CN_T1</span>';
+  }
+</script>
+
+</body>
+</html>
