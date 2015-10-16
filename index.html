@@ -42,10 +42,10 @@
   }
 /*############################### [SLIDER] ################################*/
 .wrapper {
-      width: 800px;
-      margin-left: auto;
-      margin-right: auto;
-      margin-top: 700px;
+  width: 600px;
+  margin-left: 237px;
+  margin-right: auto;
+  margin-top: 654px;
     }
 
 .wrapper > div {
@@ -75,12 +75,27 @@
 
 var slider_time = ["Pro_CN_T1", "Prop_CN_T2", "Prop_CN_T3", "Prop_CN_T4", "Prop_CN_T5"];
 
+var slider_year = [444, 555, 888, 444, 2222];
+
 var valueData;
 
 var statesLayer;
 
+
+var convert = [
+              d3.format(slider_time[0])(slider_year[0]),
+              d3.format(slider_time[1])(slider_year[1]),
+              d3.format(slider_time[2])(slider_year[2]),
+              d3.format(slider_time[3])(slider_year[3]),
+              d3.format(slider_time[4])(slider_year[4]),
+              ];
+
+console.log(convert);
+
 var essai = d3.slider()
-      .scale(d3.scale.ordinal().domain(slider_time).rangePoints([0, 1], 0.5)).axis(d3.svg.axis()).snap(true).value(slider_time[0])
+      .scale(d3.scale.ordinal().domain(slider_time).rangePoints([0, 1], 0.5)).axis(d3.svg.axis())
+      // .tickFormat(d3.format(convert))
+      .snap(true).value(slider_time[0])
       d3.select('#slider12').call(essai);
 
 L.mapbox.accessToken = 'pk.eyJ1IjoiaG9zYXJzaXBoIiwiYSI6ImNpZnFzajQ1ODc2MHRzaWtxemV6ZWtkdHEifQ.8uQq7HtgqwHVAsk-lZO3ug';
@@ -100,7 +115,7 @@ function getStyle(feature) {
   return  {
       weight: 2,
       opacity: 0.1,
-      color: 'black',
+      color: 'blue',
       fillOpacity: 0.9,
       fillColor: getColor(feature.properties.Pro_CN_T1)
   };
@@ -124,12 +139,13 @@ statesLayer = L.geoJson(cnData,  {
                        return  {
                            weight: 2,
                            opacity: 0.1,
-                           color: 'black',
+                           color: 'blue',
                            fillOpacity: 0.9,
                            fillColor: getColor(feature.properties[valueData])
                        };
                      }
                });
+
   // get color depending on population density value
   function getColor(d) {
       return d > 1 ? '#00482C' :
@@ -153,9 +169,19 @@ statesLayer = L.geoJson(cnData,  {
   function mousemove(e) {
       var layer = e.target;
 
-      popup.setLatLng(e.latlng);
-      popup.setContent('<div class="marker-title">' + layer.feature.properties.NOM_MUN + '</div>' +
-          layer.feature.properties[valueData] + ' Cantidad de Verdes');
+      if (valueData == null) {
+
+        popup.setLatLng(e.latlng);
+        popup.setContent('<div class="marker-title">' + layer.feature.properties.NOM_MUN + '</div>' +
+            layer.feature.properties.Pro_CN_T1 + ' Cantidad de Verdes');
+      }
+
+      else {
+
+        popup.setLatLng(e.latlng);
+        popup.setContent('<div class="marker-title">' + layer.feature.properties.NOM_MUN + '</div>' +
+            layer.feature.properties[valueData] + ' Cantidad de Verdes');
+      }
 
       if (!popup._map) popup.openOn(map);
       window.clearTimeout(closeTooltip);
@@ -186,7 +212,8 @@ statesLayer = L.geoJson(cnData,  {
   map.legendControl.addLegend(getLegendHTML());
 
   function getLegendHTML() {
-    var grades = [.10, .20, .40, .60, .80, 1],
+
+    var grades = [".10", ".20", ".40", ".60", ".80", "1"],
     labels = [],
     from, to;
 
