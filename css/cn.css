@@ -1,0 +1,79 @@
+ #map {
+   position:absolute;
+   top:60px;
+   bottom:0;
+   height: 95%;
+   width: 100%;
+ }
+
+/*############################### [INFO] ################################*/
+  .info {
+      padding: 6px 8px;
+      font: 14px/16px Arial, Helvetica, sans-serif;
+      background: white;
+      background: rgba(255,255,255,0.8);
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      border-radius: 5px;
+  }
+
+  .legend {
+      text-align: left;
+      line-height: 20px;
+      color: #555;
+  }
+  .legend i {
+      width: 18px;
+      height: 18px;
+      float: left;
+      margin-right: 8px;
+      opacity: 0.7;
+  }
+
+
+.leaflet-popup-close-button {
+  display: none;
+  }
+.leaflet-popup-content-wrapper {
+  pointer-events: none;
+  }
+
+/*############################### [SLIDER] ################################*/
+.wrapper {
+  position: absolute;
+  width: 400px;
+  top: 92%;
+  left: 1px;
+  z-index: 10;
+  opacity: 0.8;
+  padding: 10px;
+    }
+
+/*.wrapper > div {
+  margin: 35px 0;
+  }*/
+
+/*############################### [LIST] ################################*/
+  #basemaps-wrapper {
+   position: absolute;
+   top: 71px;
+   right: 10px;
+   z-index: 10;
+   opacity: 0.8;
+   background: white;
+   padding: 10px;
+ }
+ #basemaps {
+   margin-bottom: 5px;
+ }
+
+
+/*############################### [SLIDER] ################################*/
+  button {
+  		width: 4em;
+  		height: 2em;
+  		background: rgb(53, 135, 212);
+  		border: 1px solid rgb(53, 135, 212);
+  		border-radius: 4px;
+  		color: white;
+  		font-size: 1.5em;
+  	}
