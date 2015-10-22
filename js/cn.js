@@ -195,3 +195,62 @@ statesLayer = L.geoJson(cn_json,  {
     };
 
     legend.addTo(map);
+
+/*############################### [BAR CHART] ################################*/
+var margin = {top: 70, right: 20, bottom: 40, left: 40},
+              w = 500 - margin.left - margin.right,
+              h = 400 - margin.top - margin.bottom;
+
+var color = d3.scale.category20();
+
+var circleConstraint = d3.min([h, w]);
+
+var radius = d3.scale.linear()
+            .range([0, (circleConstraint / 2)]);
+
+var centerXPos = w / 2 + margin.left;
+var centerYPos = h / 2 + margin.top;
+
+var svg = d3.select("#chart").append("svg")
+.attr("width", w + margin.left + margin.right)
+.attr("height", h + margin.top + margin.bottom)
+.append("g")
+.attr("transform", "translate(" + centerXPos + ", " + centerYPos + ")");
+
+// Read cn.csv
+d3.csv("data/data_11.csv", function(error, data) {
+  var maxValue = 0;
+  data.forEach(function(d) {
+    d.set1 = +d.set1;
+    d.set2 = +d.set2;
+    if(d.set1 > maxValue)
+    maxValue = d.set1;
+    console.log(maxValue);
+    if(d.set2 > maxValue)
+    maxValue = d.set2;
+    // console.log(maxValue);
+  });
+
+  var topValue =1.5 * maxValue;
+
+  var ticks = [];
+  for(i =0; i <5;i += 1){
+  ticks[i] = topValue * i / 5;
+  }
+  radius.domain([0,topValue]);
+
+  var circleAxes = svg.selectAll(".circle-ticks")
+                  .data(ticks)
+                  .enter().append("g")
+                  .attr("class", "circle-ticks");
+                  circleAxes.append("svg:circle")
+                  .attr("r", function(d) {return radius(d);})
+                  .attr("class", "circle")
+                  .style("stroke", "#CCC")
+                  .style("fill", "none");
+
+  circleAxes.append("svg:text")
+  .attr("text-anchor", "middle")
+  .attr("dy", function(d) {return radius(d)})
+  .text(String);
+});

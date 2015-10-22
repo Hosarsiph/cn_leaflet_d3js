@@ -66,14 +66,9 @@
    margin-bottom: 5px;
  }
 
-
-/*############################### [SLIDER] ################################*/
-  button {
-  		width: 4em;
-  		height: 2em;
-  		background: rgb(53, 135, 212);
-  		border: 1px solid rgb(53, 135, 212);
-  		border-radius: 4px;
-  		color: white;
-  		font-size: 1.5em;
-  	}
+/*############################### [BAR CHART] ################################*/
+#chart {
+		  position: absolute;
+      top: 56%;
+      left: 39px;
+		}
