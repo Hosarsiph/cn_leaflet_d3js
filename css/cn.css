@@ -71,4 +71,10 @@
 		  position: absolute;
       top: 56%;
       left: 39px;
+      width: 469px;
+      height: 375px;
+      /*############[test]###########*/
+      /*background: rgba(255, 255, 255, 0.8) none repeat scroll 0% 0%;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      border-radius: 5px;*/
 		}
